@@ -92,6 +92,21 @@ Array.prototype.getRow = function(index) {
 
 }
 
+Array.prototype.indOfMax = function() {
+
+    let max = this[0];
+    let maxId = 0;
+    for (let i=0; i < this.length; i++) {
+        if (this[i] > max) {
+            max = this[i];
+            maxId = i;
+        }
+    }
+
+    return maxId;
+
+}
+
 Array.prototype.getIndexOfMin = function() {
     
     let min = this[0][0];
@@ -109,6 +124,25 @@ Array.prototype.getIndexOfMin = function() {
     }
 
     return minId;
+
+}
+
+Array.prototype.getIndexesOfMin = function() {
+
+    let minId = this.getIndexOfMin();
+    const min = this [minId[0]] [minId[1]];
+
+    let indexes = [];
+
+    for (let i=0; i < this.length; i++) {
+        for (let j=0; j < this[i].length; j++) {
+            if (this[i][j] === min) {
+                indexes.push([i,j]);
+            }
+        }
+    }
+
+    return indexes;
 
 }
 
@@ -246,19 +280,29 @@ class CalculateMethod {
 
         u[0] = 0;
 
-        for (let i=0; i < spends.length; i++) {
-            for (let j=0; j < spends[i].length; j++) {
+        const calcU = (index) => {
 
-                if (spends[i][j] !== null) {
-
-                    if (u[i] !== null) v[j] = this.rates[i][j] - u[i];
-
-                    else if (v[j] !== null) u[i] = this.rates[i][j] - v[j];
-
+            for (let i=0; i < spends.length; i++) {
+                if (v[i] === null && spends[index][i]) {
+                    v[i] = this.rates[index][i] - u[index];
+                    calcV(i);
                 }
-
             }
+
         }
+
+        const calcV = (index) => {
+
+            for (let i=0; i < spends[0].length; i++) {
+                if (u[i] === null && spends[i][index]) {
+                    u[i] = this.rates[i][index] - v[index];
+                    calcU(i);
+                }
+            }
+
+        }
+
+        calcU(0);
 
         let potentials = spends.copy().map(el => el.map(_ => null));
 
@@ -274,7 +318,9 @@ class CalculateMethod {
 
     recount(spends, potentials) {
 
-        let start = potentials.getIndexOfMin();
+        let starts = potentials.getIndexesOfMin();
+
+        let start = starts[0];
 
         var findWayRow = (spends, currPoint, points) => {
 
@@ -309,7 +355,7 @@ class CalculateMethod {
             const col = spends.getCol(x);
 
             for (let i=0; i < col.length; i++) {
-
+        
                 if (x === start[1] && i === start[0] && points.length !== 1) return points;
 
                 if (i === y) continue;
@@ -325,27 +371,52 @@ class CalculateMethod {
             }
 
         }
-        const [sY, sX] = start;
-
-        spends[sY][sX] = 0;
-
-        const way = findWayCol(spends, start, [start]);
-        const values = way.map(el => spends[el[0]][el[1]]);
-        const min = Math.min(...values.filter((el, i) => i % 2 === 1 && el !== 0));
-
         
+        let ways = [];
+        let mins = [];
+
+        for (let i=0; i < starts.length; i++) {
+
+            const s = starts[i];
+            
+            start = starts[i];
+
+            const x = s[1];
+            const y = s[0];
+
+            spends[y][x] = 0;
+
+            const way = findWayCol(spends, s, [s]);
+            const values = way.map(el => spends[el[0]] [el[1]]);
+            const min = Math.min(...values.filter((el, i) => i % 2 === 1));
+
+            ways.push(way);
+            mins.push(min);
+
+            spends[y][x] = null;
+
+        }
+
+        const maxId = mins.indOfMax();
+
+        const way = ways[maxId];
+        const min = mins[maxId];
+
+        spends[way[0][0]][way[0][1]] = 0;
+
+        let canDelete = true;
 
         let $ = 1;
-        let canDelete = true;
-        const maxDeliveryCost = Math.max(...way.filter((_, i) => i % 2 === 1).map(el => this.rates [el[0]] [el[1]] ));
         for (const node of way) {
 
             const x = node[1];
             const y = node[0];
 
-            if (spends[y][x] === min && $ === -1)  {
+            if (spends[y][x] === min && $ === -1 && canDelete)  {
                 spends[y][x] = null;
+                canDelete = false;
             }
+
             else spends[y][x] += min*$;
 
             $ = -$;
@@ -379,7 +450,7 @@ class CalculateMethod {
 
 }
 
-//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA END
+//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA END 
 
 class Method {
     /**
