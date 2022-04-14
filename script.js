@@ -280,29 +280,39 @@ class CalculateMethod {
 
         u[0] = 0;
 
-        const calcU = (index) => {
+        for (let i=0; i < spends.length; i++) {
 
-            for (let i=0; i < spends.length; i++) {
-                if (v[i] === null && spends[index][i]) {
-                    v[i] = this.rates[index][i] - u[index];
-                    calcV(i);
+            for (let j=0; j < spends[i].length; j++) {
+                if (spends[i][j] !== null) {
+
+                    if (v[j] === null && u[i] !== null) {
+                        v[j] = this.rates[i][j] - u[i]; 
+                    }
+
+                    if (u[i] === null && v[j] !== null) {
+                        u[i] = this.rates[i][j] - v[j];
+                    }
                 }
             }
 
         }
 
-        const calcV = (index) => {
+        for (let i=0; i < spends.length; i++) {
 
-            for (let i=0; i < spends[0].length; i++) {
-                if (u[i] === null && spends[i][index]) {
-                    u[i] = this.rates[i][index] - v[index];
-                    calcU(i);
+            for (let j=0; j < spends[i].length; j++) {
+                if (spends[i][j] !== null) {
+
+                    if (v[j] === null && u[i] !== null) {
+                        v[j] = this.rates[i][j] - u[i]; 
+                    }
+
+                    if (u[i] === null && v[j] !== null) {
+                        u[i] = this.rates[i][j] - v[j];
+                    }
                 }
             }
 
         }
-
-        calcU(0);
 
         let potentials = spends.copy().map(el => el.map(_ => null));
 
@@ -319,7 +329,6 @@ class CalculateMethod {
     recount(spends, potentials) {
 
         let starts = potentials.getIndexesOfMin();
-
         let start = starts[0];
 
         var findWayRow = (spends, currPoint, points) => {
@@ -331,19 +340,22 @@ class CalculateMethod {
 
             for (let i=0; i < row.length; i++) {
 
-                if (i == start[1] && y == start[0] && points.length !== 1) return points;
+                if (i === x || row[i] === null) continue;
 
-                if (i === x) continue;
+                if (i === start[1] && y === start[0] && points.length > 1) return points;
 
                 const elementsOnColumn = spends.getCol(i).filter(el => el !== null).length;
 
-                if (
-                    row[i] !== null &&
-                    elementsOnColumn >= 2 &&
-                    findWayCol(spends, [y, i], points.concat([[y, i]])) 
-                ) return findWayCol(spends, [y, i], points.concat([[y, i]]));
+                if (elementsOnColumn >= 2) {
+                    const way = findWayCol(spends, [y, i], points.concat([[y, i]]))
+                    if (way) {
+                        return way;
+                    }
+                }
 
             }
+
+            return false;
 
         }
 
@@ -356,7 +368,7 @@ class CalculateMethod {
 
             for (let i=0; i < col.length; i++) {
         
-                if (x === start[1] && i === start[0] && points.length !== 1) return points;
+                if (x === start[1] && i === start[0] && points.length > 1) return points;
 
                 if (i === y) continue;
 
@@ -388,7 +400,7 @@ class CalculateMethod {
 
             const way = findWayCol(spends, s, [s]);
             const values = way.map(el => spends[el[0]] [el[1]]);
-            const min = Math.min(...values.filter((el, i) => i % 2 === 1));
+            const min = Math.min(...values.filter((_, i) => i % 2 === 1));
 
             ways.push(way);
             mins.push(min);
