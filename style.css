@@ -1,8 +1,10 @@
 * {
-    margin: 0;
-    padding: 0;
     font-family: sans-serif;
     box-sizing: border-box;
+}
+
+body {
+    background-color: #f0f0f0;
 }
 
 table {
@@ -10,12 +12,50 @@ table {
     margin: 5px;
 }
 
-.input-table input {
+label {
+    font-size: 18px;
+}
+
+input[type=radio] {
+    margin: 0 5px;
+}
+
+table input {
     outline: none;
     border-radius: 0;
     border: 1px solid #333;
-    width: 50px;
-    text-align: center;;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    font-size: 25px;
+}
+
+table caption {
+    font-size: 15px;
+}
+
+table td {
+    position: relative;
+    height: 60px;
+    width: 85px;
+    text-align: center;
+    font-size: 18px;
+    
+}
+
+button {
+    border: none;
+    outline: none;
+    padding: 5px 15px;
+    border-radius: 15px;
+    font-size: 20px;
+    margin: 5px;
+    background-color: rgb(70, 182, 70);
+    color: #fff;
+}
+
+button:hover {
+    background: rgb(6, 150, 54);
 }
 
 caption {
@@ -35,4 +75,41 @@ caption {
 
 .hide {
     display: none;
+}
+
+#output-iterations td {
+    border: 1px solid #808080;
+    padding: 2px;
+}
+
+.output-spends {
+    text-align: center;
+    font-size: 30px;
+    font-weight: 900;
+}
+
+.output-potentials {
+    text-align: center;
+    font-size: 25px;
+}
+
+.output-rates {
+    position: absolute;
+    left: 2px;
+    bottom: 2px;
+}
+
+.def-u {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.def-v {
+    text-align: right;
+}
+
+#output-result {
+    font-size: 20px;
 }

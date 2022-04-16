@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Мемонд Потанцевалов</title>
-    <script src="script.js"></script>
+    <script src="script.js" type="module"></script>
     <link rel="stylesheet" href="./style.css">
 </head>
 <body>
@@ -45,11 +45,17 @@
                 <td><input type="number" value="1"></td>
             </tr>
         </table>
+        <div>
+            <input type="radio" class="input-method" name="method" value="northWestMethod" id="n-e-m" checked><label for="n-e-m">Метод северо-западного угла</label>
+        </div>
+        <div>
+            <input type="radio" class="input-method" name="method" value="fogelsMethod" id="f-m"><label for="f-m">Метод Фогеля</label>
+        </div>
         <button id="calculate">Закончить ввод</button>
         <button id="demo">Контрольный пример</button>
     </div>
     <div id="calc-block" class="hide">
-        Здесть будет выводиться решение
+        
     </div>
 </body>
 </html>
