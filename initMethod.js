@@ -16,6 +16,7 @@ export class Method {
         this.reserveTable = inputReserveTable;
         this.needsTable = inputNeedTable
 
+        //Привязка размеров таблицы к значению поля ввода
         inputRows.oninput = () => {
             this.updateRows(+inputRows.value);
         }
@@ -24,6 +25,7 @@ export class Method {
             this.updateColumns(+inputCols.value);
         }
 
+        //Добавление обработчика событий для начала вычисления 
         document.querySelector("#demo").onclick = () => {
 
             const rates = [
@@ -50,9 +52,6 @@ export class Method {
             buttonStartCalculate.onclick = null;
             document.querySelector("#input-block").classList.add("hide");
         }
-
-        
-
         buttonStartCalculate.onclick = () => {
 
             let method = "northWestMethod";
@@ -68,11 +67,15 @@ export class Method {
             document.querySelector("#input-block").classList.add("hide");
         }
 
+        // Первоначальное обновление размеров таблицы
         this.updateRows(+inputRows.value);
         this.updateColumns(+inputCols.value);
 
     }
 
+    /**
+     * обновление количества строк в таблице
+     */
     updateRows(rows) {
 
         const tableRows = this.ratesTable.querySelectorAll("tr").length || 0;
@@ -89,6 +92,9 @@ export class Method {
 
     }
 
+    /**
+     * Обновление количества столбцов в таблице
+     */
     updateColumns(columns) {
 
         const row = this.ratesTable.querySelector("tr");
@@ -106,6 +112,9 @@ export class Method {
 
     }
 
+    /**
+     * Добавление колонки в таблицу справа
+     */
     addColumn() {
 
         const rows = this.ratesTable.querySelectorAll("tr");
@@ -135,6 +144,9 @@ export class Method {
 
     }
 
+    /**
+     * Удаление правой колонки в таблице
+     */
     removeColumn() {
 
         const rows = this.ratesTable.querySelectorAll("tr");
@@ -151,6 +163,9 @@ export class Method {
 
     }
 
+    /**
+     * Добавление строки в низ таблицы
+     */
     addRow() {
 
         const cols = this.ratesTable.querySelector("TR").querySelectorAll("TD").length;
@@ -187,6 +202,9 @@ export class Method {
 
     }
 
+    /**
+     * Удаление нижней строки в таблице
+     */
     removeRow() {
 
         const lastRow = this.ratesTable.querySelectorAll("tr").last();
@@ -197,6 +215,9 @@ export class Method {
 
     }
 
+    /**
+     * Фукнция которая собирает данные из таблицы в массивы/матрицы
+     */
     parseTables() {
 
         let rates = [], 
@@ -213,6 +234,9 @@ export class Method {
 
     }
 
+    /**
+     * Вызов функции для начала расчетов
+     */
     startCalculate(method) {
 
         let [rates, reserve, needs] = this.parseTables();

@@ -32,6 +32,9 @@ export class CalculateMethod {
 
     }
 
+    /**
+     * Поиск начального решения методом северо-западного угла
+     */
     northWestMethod() {
 
         let minX = 0, minY = 0;
@@ -63,6 +66,9 @@ export class CalculateMethod {
 
     }
 
+    /**
+     * Поиск начального решения методом Фогеля
+     */
     fogelsMethod() {
 
         let reserve = this.reserve.copy();
@@ -123,14 +129,99 @@ export class CalculateMethod {
 
         }
 
-        for (let i=spends.notNullEnementsCount(); i < rows + cols - 1; i++) {
-            spends.replaceFirst(null, 0);
+        let missingZeroes = rows + cols - 1 - spends.notNullEnementsCount();
+        let iter = 0
+        for (let _=0; _ < missingZeroes; _++) {
+            let isFind = false;
+            
+            for (let i=0; i < spends.length; i++) {
+                for (let j=0; j < spends[i].length; j++) {
+                    if (spends[i][j] === null) {
+
+                        spends[i][j] = 0;
+
+                        if (this.findWay([i,j], spends)) spends[i][j] = null;
+                        else {
+                            isFind = true;
+                            break;
+                        }
+                    }
+                }
+                if (isFind) break;
+            }
+            iter++;
+        }
+
+
+        return spends;
+
+    }
+
+    /**
+     * Поиск начального решения методом минимального элемента
+     */
+    minElement() {
+
+        let reserve = this.reserve.copy();
+        let needs = this.needs.copy();
+        let spends = this.rates.map(el => el.map(_ => null));
+        let ratesCopy = this.rates.deepCopy();
+
+        const rows = reserve.length;
+        const cols = needs.length;
+
+        for (let _ = 0; _ < rows + cols - 1; _++) {
+
+            let [i, j] = ratesCopy.getIndexOfMin();
+
+            const spend = Math.min(needs[j], reserve[i]);
+            needs[j] -= spend;
+            reserve[i] -= spend;
+
+            spends[i][j] = spend;
+
+            if (needs[j] === 0) {
+                ratesCopy.setColumn(j, null);
+            }
+
+            if (reserve[i] === 0) {
+                ratesCopy.setRow(i, null);
+            }
+
+            if (needs[j] === reserve[i]) _++;
+
+        }
+
+        let missingZeroes = rows + cols - 1 - spends.notNullEnementsCount();
+        let iter = 0
+        for (let _=0; _ < missingZeroes; _++) {
+            let isFind = false;
+
+            for (let i=0; i < spends.length; i++) {
+                for (let j=0; j < spends[i].length; j++) {
+                    if (spends[i][j] === null) {
+
+                        spends[i][j] = 0;
+
+                        if (this.findWay([i,j], spends)) spends[i][j] = null;
+                        else {
+                            isFind = true;
+                            break;
+                        }
+                    }
+                }
+                if (isFind) break;
+            }
+            iter++;
         }
 
         return spends;
 
     }
 
+    /**
+     * Расчет стоимости доставки
+     */
     deliveryCost(spends) {
 
         let cost = 0;
@@ -145,6 +236,9 @@ export class CalculateMethod {
 
     }
 
+    /**
+     * Преобразовывает матрицу (???) в список точек с коориднатами i, j
+     */
     getIndexes(spends) {
 
         let nodes = [];
@@ -159,6 +253,9 @@ export class CalculateMethod {
 
     }
 
+    /**
+     * Расчет потенциалов
+     */
     calculatePotentials(spends) {
 
         let u = new Array(spends.length).fill(null);
@@ -167,6 +264,7 @@ export class CalculateMethod {
         u[0] = 0;
 
         for (let _ = 0; _ < u.length + v.length; _++) {
+
             for (let i=0; i < spends.length; i++) {
 
                 for (let j=0; j < spends[i].length; j++) {
@@ -183,6 +281,7 @@ export class CalculateMethod {
                 }
     
             }
+
         }
 
         let potentials = spends.copy().map(el => el.map(_ => null));
@@ -197,10 +296,10 @@ export class CalculateMethod {
 
     }
 
-    recount(spends, potentials) {
-
-        let starts = potentials.getIndexesOfMin();
-        let start = starts[0];
+    /**
+     * Поиск контура от начальной точки start
+     */
+    findWay(start, spends) {
 
         var findWayRow = (spends, currPoint, points) => {
 
@@ -256,7 +355,19 @@ export class CalculateMethod {
             return false;
 
         }
-        
+
+        return findWayCol(spends, start, [start]);
+
+    }
+
+    /**
+     * Оптимизация матрицы (???)
+     */
+    recount(spends, potentials) {
+
+        let starts = potentials.getIndexesOfMin();
+        let start = starts[0];
+
         let ways = [];
         let mins = [];
 
@@ -273,7 +384,7 @@ export class CalculateMethod {
 
             const cutSpends = spends;
 
-            const way = findWayCol(cutSpends, s, [s]);
+            const way = this.findWay(start, spends);
             const values = way.map(el => spends[el[0]] [el[1]]);
             const min = Math.min(...values.filter((_, i) => i % 2 === 1));
 
@@ -314,6 +425,9 @@ export class CalculateMethod {
 
     }
 
+    /**
+     * Расчет всех итерация метода потенциалов и вывод их пользователю
+     */
     evaluate(firstIterationMethod) {
         
         const allIterations = [];

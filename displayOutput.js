@@ -3,6 +3,14 @@ import "./userFunction.js"
 
 export class DisplayData {
 
+    /**
+     * 
+     * @param {matrix} rates 
+     * @param {array} needs 
+     * @param {array} reserves 
+     * @param {number} iterations 
+     * @param {DOMElement} outputBlock 
+     */
     constructor(rates, needs, reserves, iterations, outputBlock) {
 
         this.rates = rates;
@@ -22,7 +30,10 @@ export class DisplayData {
         this.initButtons(outputBlock);
 
     }
-
+    
+    /**
+     * Инициализация блока для вывода общей суммы
+     */
     initTextNode(outputBlock) {
 
         this.textNode = document.createElement("DIV");
@@ -31,6 +42,9 @@ export class DisplayData {
 
     }
 
+    /**
+     * Инициализация функциональных клавиш
+     */
     initButtons(outputBlock) {
         const showWayBtn = document.createElement("BUTTON");
         showWayBtn.textContent = "Построить контур";
@@ -47,14 +61,23 @@ export class DisplayData {
             this.prevIteration(showWayBtn);
         }
 
+        const reloadBtn = document.createElement("BUTTON");
+        reloadBtn.textContent = "Ввести заново";
+        reloadBtn.onclick = window.location.reload;
+
         outputBlock.append(prevIterationBtn);
         outputBlock.append(showWayBtn);
         outputBlock.append(nextIterationBtn);
+        outputBlock.append(document.createElement("HR"));
+        outputBlock.append(reloadBtn);
 
         this.showIteration(this.iterations[this.currentIteration], showWayBtn);
     
     }
 
+    /**
+     * Инициализация таблицы для вывода данных
+     */
     initTable(outputBlock) {
 
         const tableW = this.needs.length + 2;
@@ -141,6 +164,9 @@ export class DisplayData {
         this.table.fillSector("uv-header", borderColor);
     }
 
+    /**
+     * Переход к следующей интерации
+     */
     nextIteration(showWayBtn) {
 
         if (this.currentIteration >= this.iterations.length - 1) return;
@@ -150,6 +176,9 @@ export class DisplayData {
 
     }
 
+    /**
+     * Переход к предыдущей итерации
+     */
     prevIteration(showWayBtn) {
 
         if(this.currentIteration <= 0) return;
@@ -159,6 +188,9 @@ export class DisplayData {
 
     }
 
+    /**
+     * Отображение текущей итерации
+     */
     showIteration({spends, potentials, u, v, way, cost}, showWayBtn) {
 
         this.table.clearSector("rates");
@@ -178,6 +210,9 @@ export class DisplayData {
 
     }
 
+    /**
+     * Отображение контура на таблице 
+     */
     showWay(way) {
         if (!way) return;
         

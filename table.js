@@ -13,6 +13,9 @@ export class DOMTable {
         this.initTable(rows, columns, id);
     }
 
+    /**
+     * Инициализация таблицы и разбиение её на секторы
+     */
     initTable(r, c, id) {
         this.table = document.createElement("TABLE");
         this.table.setAttribute("id", id);
@@ -22,7 +25,7 @@ export class DOMTable {
 
             for (let j=0; j < c; j++) {
                 const cell = document.createElement("TD");
-                const section = this.getSecrionByCoord(i, j);
+                const section = this.getSectionByCoord(i, j);
 
                 if (section && section.structure) {
                     for (const el of section.structure) {
@@ -36,7 +39,10 @@ export class DOMTable {
         }
     }
 
-    getSecrionByCoord(i, j) {
+    /**
+     * Получение идентификатора сектора, в которого входит точка (i, j)
+     */
+    getSectionByCoord(i, j) {
         for (const id in this.sections) {
             const sector = this.sections[id];
             if (sector.position && isInRect([i, j], sector.position) ) return this.sections[id];
@@ -44,14 +50,23 @@ export class DOMTable {
         return null;
     }
     
+    /**
+     * Вставка таблицы в элемент-родитель
+     */
     addTableToElement(node) {
         node.append(this.table);
     }
 
+    /**
+     * Получение ячейки таблицы по ее координатам
+     */
     getCell(i ,j) {
         return this.table.querySelectorAll("TR")[i].querySelectorAll("TD")[j];
     }
 
+    /**
+     * Заполнение сектора таблицы данными из матрицы
+     */
     pushData(data, sectionId) {
         const [i1, j1, i2, j2] = this.sections[sectionId].position;
         for (let i=i1; i <= i2; i++) {
@@ -70,11 +85,17 @@ export class DOMTable {
         }
     }
 
+    /**
+     * Очистка фона у всей таблицы
+     */
     clearBackground() {
         const cells = this.table.querySelectorAll("td");
         cells.forEach(el => el.style.background = "transparent");
     }
 
+    /**
+     * Очистка фона у сектора
+     */
     clearSector(sectionId) {
         const [i1,j1,i2,j2] = this.sections[sectionId].position;
         for (let i=i1; i <= i2; i++) {
@@ -84,6 +105,9 @@ export class DOMTable {
         }
     }
 
+    /**
+     * Заливка ячейки в секторе необходимым  цветом
+     */
     fillCell(i, j, sectionId,color) {
         const sectionPos = this.sections[sectionId].position;
         const biasI = sectionPos[0];
@@ -94,6 +118,9 @@ export class DOMTable {
         cell.style.background = color;
     }
 
+    /**
+     * Заполнение сектора необходимым цветом
+     */
     fillSector(sectionId, color) {
         const [i1,j1,i2,j2] = this.sections[sectionId].position;
 
@@ -104,6 +131,3 @@ export class DOMTable {
         }
     }
 }
-
-
-// section - position (Pstart, Pend) + cell structure (array of dom elements) + id

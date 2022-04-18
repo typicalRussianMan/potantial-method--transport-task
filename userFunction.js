@@ -1,11 +1,20 @@
+/**
+ * Послений элемент в NodeList
+ */
 NodeList.prototype.last = function() {
     return this[this.length - 1]; 
 }
 
+/**
+ * Последний элемент в Array
+ */
 Array.prototype.last = function() {
     return this[this.length - 1];
 }
 
+/**
+ * Создает копию массива
+ */
 Array.prototype.copy = function() {
 
     let copy = [];
@@ -18,6 +27,9 @@ Array.prototype.copy = function() {
 
 }
 
+/**
+ * Создает полную копию массива
+ */
 Array.prototype.deepCopy = function() {
 
     let dpcopy = [];
@@ -34,6 +46,9 @@ Array.prototype.deepCopy = function() {
 
 }
 
+/**
+ * Замена всех элементов в массиве на другие
+ */
 Array.prototype.deepReplace = function (replacement, newElement) {
 
     let dprep = [];
@@ -48,6 +63,9 @@ Array.prototype.deepReplace = function (replacement, newElement) {
 
 }
 
+/**
+ * Получение данных из таблицы в матрицу
+ */
 Array.prototype.parseTable = function(node) {
 
     const rows = node.querySelectorAll("tr");
@@ -61,17 +79,23 @@ Array.prototype.parseTable = function(node) {
 
 }
 
+/**
+ * Преобразует массив вида [[a], [b], [c]] в [a, b, c]
+ */
 Array.prototype.simplify = function() {
-    for (let i=0; i < this.length; i++)
-        this[i] = this[i][0];
+    for (let i=0; i < this.length; i++) this[i] = this[i][0];
 }
 
-
+/**
+ * Проверяет, является ли каждый элемент в массиве нулевым
+ */
 Array.prototype.isZero = function() {
-
     return this.every(el => el === 0);
 }
 
+/**
+ * Находит минимальный элемент в матрице и его координаты
+ */
 Array.prototype.min = function() {
 
     let mini = 0, minj = 0;
@@ -90,32 +114,31 @@ Array.prototype.min = function() {
 
 }
 
+/**
+ * Возвращает сумму массива
+ */
 Array.prototype.sum = function () {
-
-    let sum = 0;
-
-    for (const num of this){
-        sum += num;
-    }
-    
-    return sum;
-
+    return this.reduce((a, b) => a + b, 0);
 }
 
+/**
+ * Возвращает значения матрицы в колонке (index)
+ */
 Array.prototype.getCol = function(index) {
-
     return this.reduce((a, b) => a.concat(b[index]), []);
-
 }
 
+/**
+ * Возвращает значения матрицы в строке (index)
+ */
 Array.prototype.getRow = function(index) {
-
     return this[index];
-
 }
 
+/**
+ * Возвращает индекс максимального значения в массиве
+ */
 Array.prototype.indOfMax = function() {
-
     let max = this[0];
     let maxId = 0;
     for (let i=0; i < this.length; i++) {
@@ -126,18 +149,20 @@ Array.prototype.indOfMax = function() {
     }
 
     return maxId;
-
 }
 
+/**
+ * Возвращает координаты минимального элемента в матрице
+ */
 Array.prototype.getIndexOfMin = function() {
     
-    let min = this[0][0];
+    let min = this[0][0] || Infinity;
     let minId = [0,0];
 
     for (let i=0 ; i < this.length; i++) {
         for (let j=0; j < this[i].length; j++) {
 
-            if (this[i][j] < min) {
+            if (this[i][j] < min && this[i][j] !== null) {
                 min = this[i][j];
                 minId = [i,j];
             }
@@ -149,6 +174,9 @@ Array.prototype.getIndexOfMin = function() {
 
 }
 
+/**
+ * Возвращает список координат минимальных элементов в матрице
+ */
 Array.prototype.getIndexesOfMin = function() {
 
     let minId = this.getIndexOfMin();
@@ -168,25 +196,33 @@ Array.prototype.getIndexesOfMin = function() {
 
 }
 
+/**
+ * Проверяет, существует ли отрицательный элемент в матрице
+ */
 Array.prototype.haveNegative = function() {
-    for (let i=0; i < this.length; i++) 
-        for (let j=0; j < this[i].length; j++) 
-            if (this[i][j] < 0) return true;
-    return false;
+    return this.some(rw => rw.some(el => el < 0))
 }
 
+/**
+ * Добавляет в матрицу колонку, заполненную значением filler
+ */
 Array.prototype.pushColumn = function(filler) {
     for (let i=0; i < this.length; i++) {
         this[i].push(filler);
     }
 }
 
+/**
+ * Добавляет в матрицу строку, заполненную значением filler
+ */
 Array.prototype.pushRow = function(filler) {
     this.push(Array(this[0].length).fill(filler));
 }
 
+/**
+ * Возвращает количество элементов со значением не null
+ */
 Array.prototype.notNullEnementsCount = function() {
-
     let cnt = 0;
 
     for (let row of this) {
@@ -194,36 +230,12 @@ Array.prototype.notNullEnementsCount = function() {
             if (el !== null) cnt++;
         }
     }
-
     return cnt;
 }
 
-Array.prototype.cut = function() {
-
-    let arr = this.deepCopy();
-    let isDeleted = false;
-
-    for (let i=0; i < arr.length; i++) {
-        if (arr[i].filter(el => el !== null).length < 2) {
-            arr[i] = arr[i].map(_ => null);
-            isDeleted = true;
-        }
-    }
-
-    for (let i=0; i < arr[0].length; i++) {
-        const col = arr.getCol(i);
-        if (col.filter(el => el !== null).length < 2) {
-            arr.map(el => { 
-                el[i] = null;
-            })
-            isDeleted = true;
-        }
-    }
-
-    return isDeleted ? arr.cut() : arr;
-
-}
-
+/**
+ * Заменяет первое вхождение элемента 
+ */
 Array.prototype.replaceFirst = function(rep, fill) {
 
     for (let i=0; i < this.length; i++) {
@@ -233,6 +245,28 @@ Array.prototype.replaceFirst = function(rep, fill) {
                 return;
             }
         }
+    }
+
+}
+
+/**
+ * Заполняет колонку матрицы значением filler
+ */
+Array.prototype.setColumn = function(id, filler) {
+
+    for (let i=0; i < this.length; i++) {
+        this[i][id] = filler;
+    }
+
+}
+
+/**
+ * Заполняет строчку матрицы значением filler
+ */
+Array.prototype.setRow = function(id, filler) {
+
+    for (let i=0; i < this[id].length; i++) {
+        this[id][i] = filler;
     }
 
 }
