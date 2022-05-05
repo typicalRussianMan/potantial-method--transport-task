@@ -1,4 +1,5 @@
-import {CalculateMethod} from './potentialMethod.js';
+import { CalculateMethod } from './potentialMethod.js';
+import { VengerMethod } from './vengerMethod.js';
 
 export class Method {
     /**
@@ -10,7 +11,7 @@ export class Method {
      * @param {node} inputNeedTable 
      * @param {node} buttonStartCalculate 
      */
-    constructor(inputRows,inputCols,inputRatesTable,inputReserveTable,inputNeedTable,buttonStartCalculate, methodInput) {
+    constructor(inputRows,inputCols,inputRatesTable,inputReserveTable,inputNeedTable,buttonStartCalculate, methodInput, vengerMethodBtn) {
 
         this.ratesTable = inputRatesTable;
         this.reserveTable = inputReserveTable;
@@ -29,14 +30,13 @@ export class Method {
         document.querySelector("#demo").onclick = () => {
 
             const rates = [
-                [3,8,5,2],
-                [1,6,6,3],
-                [7,2,1,8],
-                [3,3,7,6]
+                [5,2,3,8],
+                [3,4,7,2],
+                [6,5,3,4]
             ]
 
-            const reserves = [50,20,30,20];
-            const needs = [40,10,45,10];
+            const reserves = [6,5,8];
+            const needs = [4,3,7,5];
 
             const caclBlock = document.querySelector("#calc-block");
 
@@ -65,6 +65,21 @@ export class Method {
             inputRows.oninput = null;
             buttonStartCalculate.onclick = null;
             document.querySelector("#input-block").classList.add("hide");
+        }
+
+        vengerMethodBtn.onclick = () => {
+            this.startVengerMethod(...this.parseTables());
+        }
+
+        document.querySelector("#example-venger").onclick = () => {
+            const rates = [
+                [5,2,3,8],
+                [3,4,7,2],
+                [6,5,3,4]
+            ];
+            const reserves = [6,5,8];
+            const needs = [4,3,7,5];
+            this.startVengerMethod(rates, reserves, needs);
         }
 
         // Первоначальное обновление размеров таблицы
@@ -243,6 +258,14 @@ export class Method {
         const caclBlock = document.querySelector("#calc-block");
 
         const calculator = new CalculateMethod(rates, reserve, needs, caclBlock, method);
+
+    }
+
+    startVengerMethod(rates, reserve, needs) {
+
+        const calcBlock = document.querySelector("#calc-block");
+
+        new VengerMethod(rates, reserve, needs);
 
     }
 

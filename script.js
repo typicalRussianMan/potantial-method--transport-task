@@ -13,9 +13,10 @@ function main() {
     const inpNs = document.querySelector("#input-needs");
     const btnCl = document.querySelector("#calculate");
     const inpMd = document.querySelectorAll(".input-method");
+    const btnVm = document.querySelector("#venger-method");
 
     // Взаимодействие с полями ввода данных
-    const program = new Method(inpRw, inpCl, inpRt, inpRs, inpNs, btnCl, inpMd);
+    const program = new Method(inpRw, inpCl, inpRt, inpRs, inpNs, btnCl, inpMd, btnVm);
 
 }
 

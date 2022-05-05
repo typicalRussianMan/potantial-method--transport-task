@@ -5,6 +5,10 @@ NodeList.prototype.last = function() {
     return this[this.length - 1]; 
 }
 
+Math.sum = function(...args) {
+    return args.filter(el => el !== null).reduce((a, b) => a+b, 0);
+}
+
 /**
  * Последний элемент в Array
  */
@@ -270,3 +274,17 @@ Array.prototype.setRow = function(id, filler) {
     }
 
 }
+
+/**
+ * 
+ * @param { function } fun 
+ * Метод аналогичен методу map, но начинает обход с конца
+ */
+Array.prototype.reverseMap = function(fun) {
+    let mapArr = [];
+    for (let i = this.length-1; i >= 0; i--) {
+        mapArr.push(fun(this[i], i));
+    }
+    return mapArr.reverse();
+}
+

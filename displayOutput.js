@@ -63,7 +63,7 @@ export class DisplayData {
 
         const reloadBtn = document.createElement("BUTTON");
         reloadBtn.textContent = "Ввести заново";
-        reloadBtn.onclick = window.location.reload;
+        reloadBtn.onclick = this.reload;
 
         outputBlock.append(prevIterationBtn);
         outputBlock.append(showWayBtn);
@@ -73,6 +73,10 @@ export class DisplayData {
 
         this.showIteration(this.iterations[this.currentIteration], showWayBtn);
     
+    }
+
+    reload() {
+        window.location = window.location;
     }
 
     /**
